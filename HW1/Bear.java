@@ -29,12 +29,20 @@ public class Bear extends Animal {
 	 *            The gender of the Bear to be created.
 	 */
 	public Bear(int age, Gender gender) {
-		super(age,gender);
+		super(age, gender);
 	}
 
-	public Bear(int age){
-	super(age);
+	/**
+	 * This is a personal constructor to create an Animal with an age 0 (Baby)
+	 * and a random gender. It's protected in order to be able to be used by
+	 * subclasses and river.
+	 * 
+	 * @param age
+	 */
+	protected Bear(int age) {
+		super(age);
 	}
+
 	/**
 	 * Returns true if the current age of the animal has reached the limit for
 	 * the species; otherwise, it return false.
@@ -42,10 +50,9 @@ public class Bear extends Animal {
 	 * @return true if age limit has been reached, false otherwise.
 	 */
 	public boolean maxAge() {
-		if(BEAR_MAX_AGE == this.getAge()){
+		if (BEAR_MAX_AGE == this.getAge()) {
 			return true;
-		}
-		else{
+		} else {
 			return false;
 		}
 	}
@@ -58,11 +65,10 @@ public class Bear extends Animal {
 	 * @return true if the age has been incremented, false otherwise.
 	 */
 	public boolean incrAge() {
-		if(!this.maxAge()){
+		if (!this.maxAge()) {
 			this.age++;
 			return true;
-		}
-		else{
+		} else {
 			return false;
 		}
 	}
@@ -73,11 +79,10 @@ public class Bear extends Animal {
 	 * @return The current strength.
 	 */
 	public int getStrength() {
-		if(this.age<5){
-			return this.age+1;
-		}
-		else{
-			return 9-this.age;
+		if (this.age < 5) {
+			return this.age + 1;
+		} else {
+			return 9 - this.age;
 		}
 	}
 
@@ -90,6 +95,6 @@ public class Bear extends Animal {
 	 */
 	@Override
 	public String toString() {
-		return 'B'+""+this.stringGender()+""+this.getAge()+"";
+		return "B" + super.toString();
 	}
 }

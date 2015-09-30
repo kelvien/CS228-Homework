@@ -48,6 +48,15 @@ public class BalancedBSTSet<E extends Comparable<? super E>> extends
 	 */
 	private int bottom;
 
+	public String recPreOrderTraversal(Node r){
+		if(r==null) return "";
+		String result = "";
+		result += " "+recPreOrderTraversal(r.left);
+		result += " "+recPreOrderTraversal(r.right);
+		result += " "+r.data.toString();
+		return result;
+	}
+	
 	/**
 	 * Node type for this implementation.
 	 */

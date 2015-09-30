@@ -10,6 +10,9 @@ import java.util.Random;
  *         between similar characteristics of different animals.
  */
 public abstract class Animal {
+	/**
+	 * Type of genders.
+	 */
 	protected enum Gender {
 		FEMALE, MALE
 	}
@@ -34,30 +37,40 @@ public abstract class Animal {
 	 * Creates an animal of a random age and gender.
 	 */
 	public Animal() {
-		if(this.getClass() == edu.iastate.cs228.hw1.Fish.class ){
-			age = RandomSingleton.getInstance().nextInt(FISH_MAX_AGE+1);
+		if (this.getClass() == edu.iastate.cs228.hw1.Fish.class) {
+			age = RandomSingleton.getInstance().nextInt(FISH_MAX_AGE + 1);
+		} else {
+			age = RandomSingleton.getInstance().nextInt(BEAR_MAX_AGE + 1);
 		}
-		else{
-			age = RandomSingleton.getInstance().nextInt(BEAR_MAX_AGE+1);
-		}
-		gender =  (Gender) getRandomGender();
-	}
-	
-	public Animal(int age){
-		this.age = age;
-		gender =  (Gender) getRandomGender();
+		gender = (Gender) getRandomGender();
 	}
 
-	public Enum getRandomGender(){
+	/**
+	 * This is a personal constructor to create an Animal with an age 0 (Baby)
+	 * and a random gender. It's protected in order to be able to be used by
+	 * subclasses and river.
+	 * 
+	 * @param age
+	 */
+	protected Animal(int age) {
+		this.age = age;
+		gender = (Gender) getRandomGender();
+	}
+
+	/**
+	 * a helper method to generate a random gender using RandomSingleton.
+	 * 
+	 * @return gender
+	 */
+	public Gender getRandomGender() {
 		int temp = RandomSingleton.getInstance().nextInt(2);
-		if(temp == 0){
+		if (temp == 0) {
 			return gender.MALE;
-		}
-		else{
+		} else {
 			return gender.FEMALE;
 		}
 	}
-	
+
 	/**
 	 * Creates an animal of given age and gender
 	 * 
@@ -96,33 +109,27 @@ public abstract class Animal {
 	 * @return true if the age has been incremented, false otherwise.
 	 */
 	public abstract boolean incrAge();
-	
-	public char stringGender(){
-		if(gender == Gender.MALE){
-			return 'M';
-		}
-		else{
-			return 'F';
-		}
-	}
-	
-	public char stringAnimalType(){
-		if(this.getClass() == edu.iastate.cs228.hw1.Fish.class){
-			return 'F';
-		}
-		else{
-			return 'B';
+
+	/**
+	 * a helper method to generate a string according to the gender of the
+	 * animal.
+	 * 
+	 * @return String; first character of gender.
+	 */
+	private String stringGender() {
+		if (this.gender == gender.MALE) {
+			return "M";
+		} else {
+			return "F";
 		}
 	}
 
 	@Override
-	public String toString(){
-		if(this.getClass() == null){
-			return "---";
-		}
-		else{
-			return "what";
-		//return stringAnimalType()+""+stringGender()+""+this.getAge()+"";
-		}
+	/**
+	 * First character is the gender's first character and the followed by animal's age. The actual first character will be handled by the subclass.
+	 */
+	public String toString() throws NullPointerException {
+		return stringGender() + "" + this.getAge() + "";
 	}
+
 }

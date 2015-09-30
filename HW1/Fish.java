@@ -14,7 +14,7 @@ public class Fish extends Animal {
 	 * Creates a Fish of a random age and gender.
 	 */
 	public Fish() {
-		// TODO
+		super();
 	}
 
 	/**
@@ -29,10 +29,17 @@ public class Fish extends Animal {
 		super(age, gender);
 	}
 
-	public Fish(int age){
+	/**
+	 * This is a personal constructor to create an Animal with an age 0 (Baby)
+	 * and a random gender. It's protected in order to be able to be used by
+	 * subclasses and river.
+	 * 
+	 * @param age
+	 */
+	protected Fish(int age) {
 		super(age);
 	}
-	
+
 	/**
 	 * Returns true if the current age of the animal has reached the limit for
 	 * the species; otherwise, it return false.
@@ -40,10 +47,9 @@ public class Fish extends Animal {
 	 * @return true if age limit has been reached, false otherwise.
 	 */
 	public boolean maxAge() {
-		if(FISH_MAX_AGE == this.getAge()){
+		if (FISH_MAX_AGE == this.getAge()) {
 			return true;
-		}
-		else{
+		} else {
 			return false;
 		}
 	}
@@ -56,11 +62,10 @@ public class Fish extends Animal {
 	 * @return true if the age has been incremented, false otherwise.
 	 */
 	public boolean incrAge() {
-		if(!this.maxAge()){
+		if (!this.maxAge()) {
 			this.age++;
 			return true;
-		}
-		else{
+		} else {
 			return false;
 		}
 	}
@@ -74,6 +79,6 @@ public class Fish extends Animal {
 	 */
 	@Override
 	public String toString() {
-		return 'F'+""+this.stringGender()+""+this.getAge()+"";
+		return 'F' + super.toString();
 	}
 }

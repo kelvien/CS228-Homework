@@ -54,7 +54,16 @@ public class River {
 		scan2.close();
 	}
 
-	public Animal scanStringToAnimal(String scan) {
+	/**
+	 * A helper method to convert string from file into animals used for the
+	 * River.
+	 * 
+	 * @param scan
+	 *            - String from the file. E.g: --- / BM3/ FF4
+	 * @return new object of Animal according to the string representing the
+	 *         variables.
+	 */
+	private Animal scanStringToAnimal(String scan) {
 		if (scan.equals("---")) {
 			return null;
 		} else if (scan.charAt(0) == 'B') {
@@ -85,8 +94,29 @@ public class River {
 	public River(int length) {
 		this.length = length;
 		river = new Animal[length];
+		for (int i = 0; i < length; i++) {
+			river[i] = generateRandomAnimal();
+		}
+		
 	}
-
+/**
+ * a helper method to generate a random animal.
+ * @return a new animal or null.
+ */
+	private Animal generateRandomAnimal(){
+		int use = RandomSingleton.getInstance().nextInt(3);
+		switch(use){
+		case 0:
+			return null;
+		case 1:
+			return new Bear();
+		case 2:
+			return new Fish();
+		default:
+			return null;
+		}
+	}
+	
 	/**
 	 * Generates a random river ecosystem of the given length, where the seed of
 	 * the random number is as given.
@@ -99,7 +129,11 @@ public class River {
 	public River(int length, long seed) {
 		this.length = length;
 		this.seed = seed;
+		RandomSingleton.setSeed(this.seed);
 		river = new Animal[length];
+		for (int i = 0; i < length; i++) {
+			river[i] = generateRandomAnimal();
+		}
 	}
 
 	/**
@@ -119,6 +153,7 @@ public class River {
 	 */
 	public void setSeed(long seed) {
 		this.seed = seed;
+		RandomSingleton.setSeed(this.seed);
 	}
 
 	/**
@@ -136,7 +171,12 @@ public class River {
 		return count;
 	}
 
-	public int[] emptySpace() {
+	/**
+	 * To find the position of the empty cell in the river
+	 * 
+	 * @return an array of empty cells
+	 */
+	private int[] emptySpace() {
 		int count = 0;
 		int[] emptySpace = new int[this.numEmpty()];
 		for (int a = 0; a < river.length; a++) {
@@ -164,12 +204,10 @@ public class River {
 		} else {
 			int randomPlace = RandomSingleton.getInstance().nextInt(numEmpty());
 			if (animal.getClass() == edu.iastate.cs228.hw1.Fish.class) {
-				Fish use = (Fish) animal;
-				river[emptySpace()[randomPlace]] = use;
+				river[emptySpace()[randomPlace]] = new Fish(0);
 				return true;
 			} else {
-				Bear use = (Bear) animal;
-				river[emptySpace()[randomPlace]] = use;
+				river[emptySpace()[randomPlace]] = new Bear(0);
 				return true;
 			}
 		}
@@ -188,75 +226,137 @@ public class River {
 	 */
 	public void updateCell(int i) {
 		if (river[i] == null) {
-		} else {
-//			if (river[i].stringAnimalType() == 'B'
-//					&& river[i].getAge() == river[i].BEAR_MAX_AGE) {
-//				river[i] = null;
-//			} else if (river[i].stringAnimalType() == 'F'
-//					&& river[i].getAge() == river[i].FISH_MAX_AGE) {
-//				river[i] = null;
-//			} else {
-				int move = RandomSingleton.getInstance().nextInt(3);
-				switch (move) {
-				case 0:
-				case 1:
-					if (i == 0) {
-						rule(this.getLength(),i);
-						break;
-					} else {
-						rule(i - 1,i);
-						break;
-					}
-				case 2:
-					if (i == this.getLength()-1) {
-						rule(0,i);
-						break;
-					} else {
-						rule(i + 1,i);
-						break;
-					}
+			//System.out.println(river[i]+"null");
+		} 
+		else if(river[i].maxAge()){
+			river[i] = null;
+		}
+		else {
+			int move = RandomSingleton.getInstance().nextInt(3);
+			switch (move) {
+			case 0:
+				//System.out.print(river[i]+" ");
+				rule(i, i);
+				//System.out.println("not move");
+				break;
+			case 1:
+				if (i == 0) {
+					//System.out.print(river[i]+" ");
+					//System.out.println("left");
+					rule(this.getLength() - 1, i);
+					break;
+				} else {
+					//System.out.print(river[i]+" ");
+					rule(i - 1, i);
+					//System.out.println("left");
+					break;
+				}
+			case 2:
+				if (i == this.getLength() - 1) {
+					//System.out.print(river[i]+" ");
+					rule(0, i);
+					//System.out.println("right");
+					break;
+				} else {
+					//System.out.print(river[i]+" ");
+					rule(i + 1, i);
+					//System.out.println("right");
+					break;
 				}
 			}
 		}
-//	}
+	}
 
-	public void rule(int destination, int initial) {
-		if (river[destination] == null) {
+	/**
+	 * a helper method that has all of the rules held in this project and
+	 * execute the cause and effect of a movement.
+	 * 
+	 * @param destination
+	 *            - a cell that the animal is going to. Left cell/ Right cell/
+	 *            not move.
+	 * @param initial
+	 */
+	private void rule(int destination, int initial) {
+		if (destination == initial) { // if animal doesn't move.
+		} else if (river[destination] == null) { // if destination cell is
+													// empty, animal can just
+													// move there.
 			river[destination] = river[initial];
 			river[initial] = null;
-			// Bear and fish, Fish moves and dies at destination place
-		} else if (river[destination].stringAnimalType() != river[initial]
-				.stringAnimalType() && river[initial].stringAnimalType() == 'F') {
+		} else if (!river[destination].getClass().equals(
+				river[initial].getClass())
+				&& river[initial].getClass().equals(
+						edu.iastate.cs228.hw1.Fish.class)) { // Bear and fish
+																// meets, Fish
+																// moves and
+																// dies at
+																// destination
+																// place
 			river[initial] = null;
-			// Bear and fish, Bear moves and fish dies at current place
-		} else if (river[destination].stringAnimalType() != river[initial]
-				.stringAnimalType()
-				&& river[destination].stringAnimalType() == 'F') {
+		} else if (!river[destination].getClass().equals(
+				river[initial].getClass())
+				&& river[destination].getClass().equals(
+						edu.iastate.cs228.hw1.Fish.class)) { // Bear and fish
+																// meets, Bear
+																// moves and
+																// fish dies at
+																// current place
 			river[destination] = river[initial];
 			river[initial] = null;
-		}
-		// Bear with same Gender
-		else if (river[destination].stringAnimalType() == river[initial]
-				.stringAnimalType()
-				&& river[initial].stringAnimalType() == 'B'
-				&& river[initial].stringGender() == river[destination].stringGender()) {
+		} else if (river[destination].getClass().equals(
+				river[initial].getClass())
+				&& river[initial].getClass().equals(
+						edu.iastate.cs228.hw1.Bear.class)
+				&& river[initial].gender == river[destination].gender) { // Bear
+																			// with
+																			// same
+																			// Gender
 			Bear initialBear = (Bear) river[initial];
 			Bear dest = (Bear) river[destination];
-			// Bear with bigger strength win and move
-			if (initialBear.getStrength() > dest.getStrength()) {
+			if (initialBear.getStrength() > dest.getStrength()) { // Bear with
+																	// bigger
+																	// strength
+																	// win and
+																	// move
 				river[destination] = river[initial];
 				river[initial] = null;
-			}
-			// Bear lost and killed
-			else {
+			} else { // Bear lost and killed
 				river[initial] = null;
 			}
-		}
-		else if(river[destination].stringAnimalType() == river[initial].stringAnimalType() && river[destination].stringGender() != river[initial].stringGender()){
-			if(this.numEmpty() != 0 && river[initial].stringAnimalType() == 'F'){
+		} else if (river[destination].getClass().equals(
+				river[initial].getClass())
+				&& river[destination].gender != river[initial].gender) { // Animals
+																			// with
+																			// different
+																			// gender
+																			// (Mating)
+			if (this.numEmpty() != 0
+					&& river[initial].getClass().equals(
+							edu.iastate.cs228.hw1.Fish.class)) { // Check if
+																	// there's
+																	// an empty
+																	// cell, if
+																	// there is
+																	// create a
+																	// new Fish
+																	// with age
+																	// 0 and
+																	// random
+																	// gender.
 				this.addRandom(new Fish(0));
-			}
-			else if(this.numEmpty() != 0 && river[initial].stringAnimalType() == 'B'){
+			} else if (this.numEmpty() != 0
+					&& river[initial].getClass().equals(
+							edu.iastate.cs228.hw1.Bear.class)) { // Check if
+																	// there's
+																	// an empty
+																	// cell, if
+																	// there is
+																	// create a
+																	// new Bear
+																	// with age
+																	// 0 and
+																	// random
+																	// gender.
 				this.addRandom(new Bear(0));
 			}
 		}
@@ -269,10 +369,14 @@ public class River {
 	 */
 	public void updateRiver() {
 		for (int i = 0; i < this.getLength(); i++) {
-			updateCell(i);
+			this.updateCell(i);
 		}
 		for (int i = 0; i < this.getLength(); i++) {
-			river[i].incrAge();
+			if(river[i] == null){
+			}
+			else{ 
+				river[i].incrAge();	
+			}
 		}
 	}
 
@@ -285,7 +389,8 @@ public class River {
 	 */
 	public void write(String outputFileName) throws FileNotFoundException {
 		PrintWriter print = new PrintWriter(outputFileName);
-		// TODO
+		print.println(this.toString());
+		print.close();
 	}
 
 	/**
@@ -297,7 +402,11 @@ public class River {
 	public String toString() {
 		String result = "";
 		for (int i = 0; i < this.getLength(); i++) {
-			result += river[i] + " ";
+			if (river[i] == null) {
+				result += "---" + " ";
+			} else {
+				result += river[i].toString() + " ";
+			}
 		}
 		return result;
 	}

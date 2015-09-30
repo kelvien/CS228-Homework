@@ -1,7 +1,9 @@
 package edu.iastate.cs228.hw1;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import edu.iastate.cs228.hw1.Animal.Gender;
@@ -10,8 +12,10 @@ import edu.iastate.cs228.hw1.Animal.Gender;
  * @author Kelvien Hidayat
  * 
  */
-public class JUnit_Project1 {
+public class JUnit1_Project1 {
 
+	
+	
 	@Test
 	public void testFishAge(){
 		Animal a = new Fish(3, Gender.MALE);
@@ -119,6 +123,18 @@ public class JUnit_Project1 {
 	}
 	
 	@Test
+	public void testToStringForAnimal(){
+		Animal a = new Fish(2, Gender.FEMALE);
+		assertEquals(a.toString(),"FF2");
+	}	
+	
+	@Test
+	public void testToStringForNull(){
+		Animal a = null;
+		assertEquals(a.toString(),null);
+	}
+	
+	@Test
 	public void newRiverWithLength5(){
 		River a = new River(5);
 		assertEquals(a.getLength(), 5);
@@ -153,6 +169,46 @@ public class JUnit_Project1 {
 		a.addRandom(new Fish());
 		assertEquals(a.addRandom(new Fish()), true);
 	}
+	
+	@Test
+	public void seeding(){
+		River a = new River(5,30);
+		a.addRandom(new Fish());
+		a.addRandom(new Bear());
+		a.addRandom(new Fish());
+		a.addRandom(new Bear());
+		a.addRandom(new Fish());
+		assertEquals(a.river[0].toString(), "FM1");
+	}
+	
+	
+	//Male Fish moves left (Male Bear). Fish dies, becomes null, Bear still exist.
+//	@Test
+//	public void seeding300TestFishMoveLeft(){
+//		River a = new River(5,300);
+//		a.addRandom(new Fish(0, Gender.MALE));
+//		a.addRandom(new Bear(1, Gender.MALE));
+//		a.addRandom(new Fish(4, Gender.FEMALE));
+//		a.addRandom(new Bear(2, Gender.MALE));
+//		a.addRandom(new Fish(0, Gender.FEMALE));
+//		assertEquals(a.river[0].toString(), "---");
+//	}
+//	
+//	// Male Bear moves to right (Male Fish). Bear should kill the fish and left the previous space to null.
+//	@Test
+//	public void seeding30TestFishMoveRight(){
+//		River a = new River(5,30);
+//		a.addRandom(new Fish(0, Gender.MALE));
+//		a.addRandom(new Bear(1, Gender.MALE));
+//		a.addRandom(new Fish(4, Gender.FEMALE));
+//		a.addRandom(new Bear(2, Gender.MALE));
+//		a.addRandom(new Fish(0, Gender.FEMALE));
+//		assertEquals(a.river[0].toString(), "null");
+//		assertEquals(a.river[1].toString(), "BM1");
+//	}
+	
+	
+	
 	
 	
 	
